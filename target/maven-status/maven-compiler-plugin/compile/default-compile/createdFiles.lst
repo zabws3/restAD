@@ -1,0 +1,5 @@
+clases/OperacionSQL.class
+clases/Imagen.class
+test/restad/JakartaRestConfiguration.class
+clases/respuestasJSON.class
+test/restad/resources/JakartaEE91Resource.class
