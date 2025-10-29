@@ -9,7 +9,7 @@ package clases;
  * @author alumne
  */
 public class respuestasJSON {
-    
+   /* 
     public static String login(String username, boolean exitoso){
         if(exitoso){
             return "{\"status\":\"success\", \"message\":Login correcto\" , \"username\" :\"" + username + "\" }";
@@ -17,7 +17,7 @@ public class respuestasJSON {
             return "{\"status\":\"error\", \"message\":Usuario o password incorrectos\" , \"username\" :\"" + username + "\" }";
         }
     }
-    
+    */
     public static String errorServidor(){
         return "{\"status\":\"error\":, \"message\"Ha habido un error en el servidor\" }";
     }
