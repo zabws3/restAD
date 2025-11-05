@@ -1,7 +1,6 @@
 package test.restad.resources;
 
 import clases.OperacionSQL;
-import clases.respuestasJSON;
 import clases.Imagen;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.FormParam;
@@ -12,6 +11,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -129,8 +130,9 @@ public class JakartaEE91Resource {
         if (title == null || title.isEmpty() || creator == null || creator.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-
-        Imagen img = new Imagen(title, description, keywords, author, creator, capt_date, "", "");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaAlta = sdf.format(new Date());
+        Imagen img = new Imagen(title, description, keywords, author, creator, capt_date, fechaAlta, "");
         OperacionSQL op = new OperacionSQL();
         // Insertar la imagen en la base de datos
         boolean registroExitoso = op.insertarImagen(img);
@@ -209,7 +211,7 @@ public class JakartaEE91Resource {
             return Response.ok().build();
         } else {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }//DUDA: HACE FALTA TRY-CATCH EN LOS METODOS??
+        }
     }
 
     /**
@@ -279,10 +281,10 @@ public class JakartaEE91Resource {
     @Path("searchTitle/{title}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchByTitle(@PathParam("title") String title) { //DUDA: no me tendrían que pasar tmb el nombre de usuario?
+    public Response searchByTitle(@PathParam("title") String title) { //DUDA: no me tendrían que pasar tmb el nombre de usuario? NO, CONTROLA CLIENTE!
 
         OperacionSQL op = new OperacionSQL();
-        List<Imagen> imagenes = op.buscarImagenes(title, null, null, null, null); //MODIFICAR MÉTODO EN CASO DE QUE NO HAGA FALTA EL CREADOR!!!!
+        List<Imagen> imagenes = op.buscarImagenes(title, null, null, null, null);
 
         return Response.ok(listaImagenesAJson(imagenes)).build();
 
@@ -298,13 +300,31 @@ public class JakartaEE91Resource {
     @Path("searchCreationDate/{date}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchByCreationDate(@PathParam("date") String date){
-        
+    public Response searchByCreationDate(@PathParam("date") String date) {
+
         OperacionSQL op = new OperacionSQL();
         List<Imagen> imagenes = op.buscarImagenes(null, null, null, date, null); //MODIFICAR MÉTODO EN CASO DE QUE NO HAGA FALTA EL CREADOR!!!!
 
         return Response.ok(listaImagenesAJson(imagenes)).build();
-        
+
     }
-    // las demás búsquedas ... (resolver duda antes)
+
+    /**
+     * GET method to search images by title Servicio extra!
+     *
+     * @param creator
+     * @return
+     */
+    @Path("searchCreator/{creator}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByCreator(@PathParam("creator") String creator) {
+
+        OperacionSQL op = new OperacionSQL();
+        List<Imagen> imagenes = op.buscarImagenesPorCreador(creator); //MODIFICAR MÉTODO EN CASO DE QUE NO HAGA FALTA EL CREADOR!!!!
+        if (imagenes == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(listaImagenesAJson(imagenes)).build();
+    }
 }

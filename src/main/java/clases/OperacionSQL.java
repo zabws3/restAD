@@ -133,8 +133,8 @@ public class OperacionSQL {
             abrirConexion();
             //Vamos añadiendo parámetros a la búsqueda en función de si son null o no
             StringBuilder query = new StringBuilder();
-            query.append("SELECT id, title, description, keywords, author, creator, capture_date, storage_date, filename ");
-            query.append("FROM image WHERE creator=?");
+            query.append("SELECT id, title, description, keywords, author, creator, capture_date, storage_date, filename");
+            query.append("FROM image");
 
             if (titulo != null) {
                 query.append(" AND title LIKE ?");
@@ -154,7 +154,7 @@ public class OperacionSQL {
             
             //Adición de parámetros a la consulta (Usamos LIKE y %, por si el usuario no ha metido exactamente el parámetro)
             int indice = 1;
-            statement.setString(indice++, creador);
+            //statement.setString(indice++, creador);
             if (titulo != null) {
                 statement.setString(indice++, "%" + titulo + "%");
             }
