@@ -134,7 +134,7 @@ public class OperacionSQL {
             //Vamos añadiendo parámetros a la búsqueda en función de si son null o no
             StringBuilder query = new StringBuilder();
             query.append("SELECT id, title, description, keywords, author, creator, capture_date, storage_date, filename");
-            query.append("FROM image");
+            query.append(" FROM image WHERE 1=1");
 
             if (titulo != null) {
                 query.append(" AND title LIKE ?");

@@ -191,7 +191,7 @@ public class JakartaEE91Resource {
         }
 
         //Crear objeto Imagen con los nuevos datos
-        //storage_date y filename se mantienen con los valores antiguos
+        //fechaAta y filename se mantienen (temporalmente)
         Imagen imgNueva = new Imagen(
                 Integer.parseInt(id),
                 title,
@@ -200,11 +200,10 @@ public class JakartaEE91Resource {
                 author,
                 creator,
                 capt_date,
-                imgActual.getFechaAlta(), // Mantener storage_date original
-                imgActual.getNombreFichero() // Mantener filename original
+                imgActual.getFechaAlta(),
+                imgActual.getNombreFichero()
         );
 
-        // Actualizar la imagen en la base de datos
         boolean modificacionExitosa = op.actualizarImagen(imgNueva);
 
         if (modificacionExitosa) {
@@ -227,7 +226,6 @@ public class JakartaEE91Resource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteImage(@FormParam("id") String id,
             @FormParam("creator") String creator) {
-        //Obtener la imagen actual para validar que el usuario es el creador
         OperacionSQL op = new OperacionSQL();
         Imagen imgActual = op.obtenerImagenPorId(Integer.parseInt(id));
 
@@ -285,7 +283,9 @@ public class JakartaEE91Resource {
 
         OperacionSQL op = new OperacionSQL();
         List<Imagen> imagenes = op.buscarImagenes(title, null, null, null, null);
-
+        if (imagenes == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return Response.ok(listaImagenesAJson(imagenes)).build();
 
     }
@@ -303,8 +303,10 @@ public class JakartaEE91Resource {
     public Response searchByCreationDate(@PathParam("date") String date) {
 
         OperacionSQL op = new OperacionSQL();
-        List<Imagen> imagenes = op.buscarImagenes(null, null, null, date, null); //MODIFICAR MÉTODO EN CASO DE QUE NO HAGA FALTA EL CREADOR!!!!
-
+        List<Imagen> imagenes = op.buscarImagenes(null, null, null, date, null);
+        if (imagenes == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         return Response.ok(listaImagenesAJson(imagenes)).build();
 
     }
@@ -326,5 +328,39 @@ public class JakartaEE91Resource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         return Response.ok(listaImagenesAJson(imagenes)).build();
+    }
+
+    /**
+     * GET method to search images by title Servicio extra!
+     *
+     * @param author
+     * @return
+     */
+    @Path("searchAuthor/{author}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByAuthor(@PathParam("author") String author) {
+
+        OperacionSQL op = new OperacionSQL();
+        List<Imagen> imagenes = op.buscarImagenes(null, null, author, null, null);
+        if (imagenes == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(listaImagenesAJson(imagenes)).build();
+
+    }
+    
+    @Path("searchKeywords/{keywords}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchByKeywords(@PathParam("keywords") String keywords) {
+
+        OperacionSQL op = new OperacionSQL();
+        List<Imagen> imagenes = op.buscarImagenes(null, keywords, null, null, null);
+        if (imagenes == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok(listaImagenesAJson(imagenes)).build();
+
     }
 }
